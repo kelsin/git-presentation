@@ -16,6 +16,7 @@
 
 % Commands
 \newcommand{\dia}[1]{\begin{figure}[H]\centerline{\xymatrix{#1}}\end{figure}}
+\newcommand{\code}[2]{\ttfamily\begin{block}{\textnormal{#1}}#2\end{block}\normalfont}
 
 \begin{document}
 
@@ -34,8 +35,27 @@
 
 \begin{frame}
   \frametitle{Object Store}
-  The git object store is a big black box and we like it that way.
+  \begin{itemize}
+  \item The git object store is a big black box and we like it that way.
+  \pause
+  \item It was written for speed and correctness
+  \pause
+  \item Comparisons
+    \begin{itemize}
+    \item More information than CVS
+    \item More sane than SVN
+    \item More efficient than Mercurial
+    \end{itemize}
+  \end{itemize}
 \end{frame}
+
+In my experience people seem to assume things about the way git works. Often
+these assumptions are wrong. ``Doing it that way would be slow'' is often
+heard. While learning I think it's good to ignore these issues and just believe
+that the object store is amazing and allows git to perform very nicely.
+
+That being said, everything in the .git folder EXCEPT the object store is plain
+text files. Often all the tools do is manipulate them. Feel free to poke around.
 
 \begin{frame}
   \frametitle{Blobs}
@@ -84,6 +104,12 @@
   \end{itemize}
 \end{frame}
 
+I want to emphasize this point. Don't think in terms of diffs. In a linear
+system (like SVN or CVS) this was an easy abstraction to use. In some systems
+(like darcs) this is how the systems work. In git it's not. You have to think in
+terms of commits (linking to whole trees) in order for anything else to make
+sense.
+
 \subsection{Branches and Tags}
 
 \begin{frame}
@@ -117,6 +143,87 @@
   \item Can shoot yourself in the foot and heal it back up again
   \end{itemize}
 \end{frame}
+
+\section{Usage}
+
+I don't want to spend a lot of time on examples since you can find that only in
+cheat sheets but let's look quickly at some examples of using git.
+
+\subsection{Creating and Commiting}
+
+\begin{frame}
+  \frametitle{Starting Out}
+  \code{Setting User Info}{
+git config --global user.name "Christopher Giroir" \newline
+git config --global user.email "kelsin@valefor.com"}
+    \pause
+  \code{Completely New Repo}{
+cd dir-with-code \newline
+git init}
+    \pause
+  \code{Cloning any accessible repo}{
+git clone git@github.com:Kelsin/configs.git \newline
+cd configs}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Commits}
+  \code{Initial Commit}{
+git add . \newline
+git commit -m "Initial Commit"}
+    \pause
+  \code{Editing some files}{
+git add edited-file.rb \newline
+git commit -m "Improved everything"}
+    \pause
+  \code{Adding to previous commit}{
+git add edited-file.rb \newline
+git commit --amend}
+\end{frame}
+
+\subsection{Inspection}
+
+\begin{frame}
+  \frametitle{Status and Diffs}
+  \code{Normal Status}{git status}
+    \pause
+  \code{What's current changed?}{git diff}
+    \pause
+  \code{Changes from only one file}{git diff example-file.rb}
+    \pause
+  \code{Changes between branches}{git diff master}
+\end{frame}
+
+Most git commands page automatically in an interactive terminal. Git diff
+accepst almost all flags that normal diff accepts.
+
+\begin{frame}
+  \frametitle{Show and Log}
+  \code{Show current commit}{git show}
+    \pause
+  \code{Show some other commit}{git show 234ab32}
+    \pause
+  \code{Show log of recent commits}{git log}
+    \pause
+  \code{Show pretty log}{git log --graph --decorate --oneline}
+\end{frame}
+
+Git has many options for show commits both in log form and in individual detail.
+
+\begin{frame}
+  \frametitle{Refs and Objects}
+  \code{By commit id}{git show 234ab32}
+    \pause
+  \code{By branch}{git show master}
+    \pause
+  \code{By tag}{git show v3.0.2}
+    \pause
+  \code{Relative}{git show HEAD\^{}}
+\end{frame}
+
+You can reference git commits in many ways including dates, branch labels, tag
+labels, etc. There are even some commands for finding commits relative to other
+commits.
 
 \section{Distribution}
 
@@ -301,8 +408,8 @@
 \begin{frame}
   \frametitle{Remote Commands}
   \begin{itemize}
-  \item \texttt{git remote add origin git@scm.savewave.com:savingstar/savingstar-web.git}
-    \\ This creates a new remote named origin linked up to gitorious
+  \item \texttt{git remote add origin git@github.com:Kelsin/configs.git}
+    \\ This creates a new remote named origin linked up to github
     \pause
   \item \texttt{git fetch}
     \\ Pulls in objects from remotes to local object store
