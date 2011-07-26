@@ -1,9 +1,414 @@
-\documentclass[aspectratio=169]{beamer}
+\documentclass{beamer}
+\usepackage{color}
+
+\input xy
+\xyoption{all}
+
+\usepackage{beamerthemesplit}
+\usetheme{Darmstadt}
+\usecolortheme{crane}
 
 \title{Git for mere mortals}
 \author{Christopher Giroir}
 \date{July 26th, 2011}
 
+% Commands
+\newcommand{\dia}[1]{\begin{figure}\centerline{\xymatrix{#1}}\end{figure}}
+
 \begin{document}
-\titlepage
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{Contents}
+  \tableofcontents
+\end{frame}
+
+\section{Internals}
+
+\begin{frame}
+  \frametitle{Object Store}
+  The git object store is a big black box and we like it that way.
+\end{frame}
+
+\subsection{Objects}
+
+\begin{frame}
+  \frametitle{Blobs}
+  \dia{ *+++=[o][F-]{\txt{Blob}} }
+  \begin{itemize}
+  \item Blobs store file data (text or binary).
+  \item Labeled by SHA1. \textit{If the content changes, so does the SHA.}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Trees}
+  \dia{ &
+    *+++=[o][F-]{\txt{Blob}} \\
+    *+++=[o][F-]{\txt{Tree}} \ar[r] \ar[ru] &
+    *+++=[o][F-]{\txt{Blob}}
+  }
+  \begin{itemize}
+  \item Trees point to blobs
+  \item Represent the entire state of the working directory
+  \item Also labeled by SHA's.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Commits}
+  \dia { & &
+    *+++=[o][F-]{\txt{Blob}} \\
+    *+++=[o][F-]{\txt{Commit}} \ar[r] &
+    *+++=[o][F-]{\txt{Tree}} \ar[ru] \ar[r] &
+    *+++=[o][F-]{\txt{Blob}}
+  }
+  \begin{itemize}
+  \item Point to a tree object
+  \item Stores author and date information
+  \item Labeled by SHA's.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Important Distinction!}
+  \begin{itemize}
+  \item Commits link to entires \textcolor{blue}{\textbf{TREES}} not
+  \textcolor{red}{\textbf{DIFFS}}.
+  \item Diffs are not stored in git, they are computed.
+  \end{itemize}
+\end{frame}
+
+\subsection{Branches and Tags}
+
+\begin{frame}
+  \frametitle{Pointers}
+  Most other things in git are pointers to commits.
+  \dia {
+    *++[o][F-]{a} \ar[r] \save +<0cm,0.6cm>*\txt{\textit{v3.0.1}} \restore &
+    *++[o][F-]{b} \ar[r] \ar[rd] \save +<0cm,0.6cm>*\txt{Master} \restore &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-465} \restore \\ & &
+    *++[o][F-]{g} \ar[r] &
+    *++[o][F-]{h} \ar[r] &
+    *++[o][F-]{i} \save +<0cm,0.6cm>*\txt{SAVE-576} \restore
+  }
+  \begin{itemize}
+  \item Branches are just labels to commit SHA's
+  \item Tags are just labels with meta information
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Rewriting History}
+  \begin{itemize}
+  \item Rewriting a commit changes it's SHA
+    \pause
+  \item Any commit after it changes as well
+    \pause
+  \item Most branch operations are quick and painless
+    \pause
+  \item Can shoot yourself in the foot and heal it back up again
+  \end{itemize}
+\end{frame}
+
+\section{Distribution}
+
+\subsection{Advantages}
+
+\begin{frame}
+  \frametitle{Distributed Source Control}
+  \begin{itemize}
+  \item Only difference from gitorious and local: working directories
+    \pause
+  \item Can function offline
+    \pause
+  \item Can ``push'' and ``pull'' from each other, as well as servers
+    \pause
+  \item Each of our computers serves as a backup of the server
+  \end{itemize}
+\end{frame}
+
+\subsection{Locations}
+
+\begin{frame}
+  \frametitle{Four Locations}
+  Git has 4 locations where commits are stored
+  \pause
+  \begin{itemize}
+  \item \textbf{Remote Repo} Any remote object store
+    \pause
+  \item \textbf{Local Repo} You local object store
+    \pause
+  \item \textbf{Index} A single spot to ``stage'' commits
+    \pause
+  \item \textbf{Working Directory} These are the files you are editing
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Four Locations}
+  \dia {
+    *++[F-,]{\txt{Working}} &
+    *++[F-,]{\txt{Index}} &
+    *++[F-,]{\txt{Local Repo}} &
+    *++[F-,]{\txt{Remote Repo}}
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Four Locations}
+  \dia {
+    *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
+    *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
+    *++[F-,]{\txt{Local Repo}} &
+    *++[F-,]{\txt{Remote Repo}}
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Four Locations}
+  \dia {
+    *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
+    *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
+    *++[F-,]{\txt{Local Repo}} \ar@/^2pc/[ll]^{\txt{git checkout}}&
+    *++[F-,]{\txt{Remote Repo}}
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Four Locations}
+  \dia {
+    *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
+    *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
+    *++[F-,]{\txt{Local Repo}} \ar@/^2pc/[r]^{\txt{git push}} \ar@/^2pc/[ll]^{\txt{git checkout}}&
+    *++[F-,]{\txt{Remote Repo}} \ar@/^2pc/[l]^{\txt{git fetch}} \ar `d[dd] `[ddlll]^{\txt{git pull}} [lll] \\
+    & & & \\
+    & & &
+  }
+\end{frame}
+
+\section{Merging and Rebasing}
+
+\subsection{Merging}
+
+\begin{frame}
+  \frametitle{Fast Forward Merging}
+  \begin{example}
+    \texttt{git checkout master \\ git merge SAVE-234}
+  \end{example}
+  \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Fast Forward Merging}
+  \begin{example}
+    \texttt{git checkout master \\ git merge SAVE-234}
+  \end{example}
+  \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] \ar@/_2pc/[rrr]_{Master} &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Fast Forward Merging}
+  \begin{example}
+    \texttt{git checkout master \\ git merge SAVE-234}
+  \end{example}
+  \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \save +<0cm,-0.6cm>*\txt{Master} \restore \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Merging}
+  \begin{example}
+    \texttt{git checkout master \\ git merge SAVE-234}
+  \end{example}
+  \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] \ar[rd] &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
+    *++[o][F-]{g} \ar[r] &
+    *++[o][F-]{h} \ar[r] &
+    *++[o][F-]{i} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Merging}
+  \begin{example}
+    \texttt{git checkout master \\ git merge SAVE-234}
+  \end{example}
+  \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] \ar[rd] &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \ar[r] &
+    *++[o][F=]{j}  \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
+    *++[o][F-]{g} \ar[r] &
+    *++[o][F-]{h} \ar[r] &
+    *++[o][F-]{i} \ar[ru] \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{No Fast Forward Merging}
+  \begin{example}
+    \texttt{git checkout master \\ git merge --no-ff SAVE-234}
+  \end{example}
+  \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{No Fast Forward Merging}
+  \begin{example}
+    \texttt{git checkout master \\ git merge --no-ff SAVE-234}
+  \end{example}
+  \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[rd] \ar[rrrr] & & & &
+    *++[o][F=]{f} \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \ar[ru] \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
+  }
+\end{frame}
+
+\subsection{Rebase}
+
+\begin{frame}
+  \frametitle{Rebase}
+  \begin{example}
+    \texttt{git checkout SAVE-234 \\ git rebase master}
+  \end{example}
+  \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] \ar[rd] &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
+    *++[o][F-]{g} \ar[r] &
+    *++[o][F-]{h} \ar[r] &
+    *++[o][F-]{i} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Rebase}
+  \begin{example}
+    \texttt{git checkout SAVE-234 \\ git rebase master}
+  \end{example}
+  \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \ar[lld] \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
+    *++[o][F=]{g'} \ar[r] &
+    *++[o][F=]{h'} \ar[r] &
+    *+++[o][F=]{i'} \save +<0cm,-0.8cm>*\txt{SAVE-234} \restore
+  }
+\end{frame}
+
+\section{Extras}
+
+\subsection{Remotes}
+
+\begin{frame}
+  \frametitle{Remote Commands}
+  \begin{itemize}
+  \item \texttt{git remote add origin git@scm.savewave.com:savingstar/savingstar-web.git}
+    \\ This creates a new remote named origin linked up to gitorious
+    \pause
+  \item \texttt{git fetch}
+    \\ Pulls in objects from remotes to local object store
+    \pause
+  \item \texttt{git branch -a}
+    \\ Shows all branches including remote copies
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pulling}
+  \begin{itemize}
+  \item Special case
+  \item Executes:
+    \begin{itemize}
+    \item \texttt{git fetch}
+    \item \texttt{git merge}
+    \end{itemize}
+  \item Only performs the merge for the current branch
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pushing}
+  \begin{itemize}
+    \item \texttt{git push origin source:destination} \\ This will push objects
+      and update the destination branch with objects from the source
+      \pause
+    \item \texttt{git push origin :destination} \\ This will delete the remote
+      branch from the server
+      \pause
+    \item \texttt{git push -f} \\ Push normally doesn't allow anything but fast
+      forward, while this completely overrides the destination using the source
+      objects
+  \end{itemize}
+\end{frame}
+
+\subsection{Misc}
+
+\begin{frame}
+  \frametitle{Git Config File}
+  \begin{itemize}
+    \item Push defaults
+    \item Commiter name and email
+    \item Color settings
+    \item Aliases
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Some Tips}
+  \begin{itemize}
+    \item Always work on branches
+      \pause
+    \item When in doubt use GitX or gitk to see what you are doing
+      \pause
+    \item When in doubt save a new branch so you can always get back
+      \pause
+    \item Add the current git branch into your prompt
+      \pause
+    \item Explore with rebase and cleaning up code before final push
+  \end{itemize}
+\end{frame}
+
 \end{document}
