@@ -150,8 +150,8 @@ sense.
 
 \section{Usage}
 
-I don't want to spend a lot of time on examples since you can find that only in
-cheat sheets but let's look quickly at some examples of using git.
+I don't want to spend a lot of time on examples since you can find that
+information in cheat sheets.
 
 \subsection{Creating and Commiting}
 
@@ -234,10 +234,12 @@ commits.
 
 \section{Distribution}
 
+\subsection{Advantages}
+
 \begin{frame}
   \frametitle{Distributed Source Control}
   \begin{itemize}
-  \item Only difference from gitorious and local: working directories
+  \item Only difference from remote and local (normally): working directories
     \pause
   \item Can function offline
     \pause
@@ -246,6 +248,8 @@ commits.
   \item Each of our computers serves as a backup of the server
   \end{itemize}
 \end{frame}
+
+\subsection{Architecture}
 
 \begin{frame}
   \frametitle{Location Descriptions}
@@ -261,6 +265,8 @@ commits.
   \item \textbf{Working Directory} These are the files you are editing
   \end{itemize}
 \end{frame}
+
+\subsection{Command Examples}
 
 \begin{frame}
   \frametitle{Locations and Commands}
@@ -415,43 +421,38 @@ commits.
 
 \begin{frame}
   \frametitle{Remote Commands}
-  \begin{itemize}
-  \item \texttt{git remote add origin git@github.com:Kelsin/configs.git}
-    \\ This creates a new remote named origin linked up to github
+  \code{Adding remote}{git remote add origin git@github.com:Kelsin/configs.git}
     \pause
-  \item \texttt{git fetch}
-    \\ Pulls in objects from remotes to local object store
+  \code{Fetch all remote objects}{git fetch}
     \pause
-  \item \texttt{git branch -a}
-    \\ Shows all branches including remote copies
-  \end{itemize}
+  \code{Show all branches}{git branch -a}
 \end{frame}
 
 \begin{frame}
   \frametitle{Pushing}
-  \begin{itemize}
-    \item \texttt{git push origin source:destination} \\ This will push objects
-      and update the destination branch with objects from the source
-      \pause
-    \item \texttt{git push origin :destination} \\ This will delete the remote
-      branch from the server
-      \pause
-    \item \texttt{git push -f} \\ Push normally doesn't allow anything but fast
-      forward, while this completely overrides the destination using the source
-      objects
-  \end{itemize}
+  \code{Push objects from source to destination}{git push origin source:destination}
+    \pause
+  \code{Removing remote branch}{git push origin :destination}
+    \pause
+  \code{Setting upstream}{git push -u origin SAVE-453}
+    \pause
+  \code{Force pushes}{git push -f origin SAVE-453}
 \end{frame}
+
+Force pushing and removing remote branches is a dangerous operation. Make
+backups of branches any time you are worried.
 
 \begin{frame}
   \frametitle{Pulling}
+  \code{Pull in remote changes}{git pull origin master}
   \begin{itemize}
-  \item Special case
+  \item \textcolor{red}{Special case}
   \item Executes:
     \begin{itemize}
     \item \texttt{git fetch}
     \item \texttt{git merge}
     \end{itemize}
-  \item Only performs the merge for the current branch
+  \item Merges in to your current branch
   \end{itemize}
 \end{frame}
 
@@ -459,6 +460,7 @@ commits.
 
 \begin{frame}
   \frametitle{Git Config File}
+  My git config is available at https://github.com/Kelsin/configs/blob/master/.gitconfig
   \begin{itemize}
     \item Push defaults
     \item Commiter name and email
