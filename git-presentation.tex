@@ -11,6 +11,7 @@
 \setbeamercovered{dynamic}
 
 \title{Git for mere mortals}
+\subtitle{https://github.com/Kelsin/git-presentation}
 \author{Christopher Giroir}
 \date{July 26th, 2011}
 
@@ -20,12 +21,13 @@
 
 \begin{document}
 
+\maketitle
+
 \begin{frame}
   \titlepage
 \end{frame}
 
 \begin{frame}
-  \frametitle{Contents}
   \tableofcontents
 \end{frame}
 
@@ -55,11 +57,12 @@ heard. While learning I think it's good to ignore these issues and just believe
 that the object store is amazing and allows git to perform very nicely.
 
 That being said, everything in the .git folder EXCEPT the object store is plain
-text files. Often all the tools do is manipulate them. Feel free to poke around.
+text files. Often all the tools do is manipulate them. Feel free to poke around
+and explore in the .git directory.
 
 \begin{frame}
   \frametitle{Blobs}
-  \dia{ *+++=[o][F-]{\txt{Blob}} }
+  \dia{ *+++=[o][F-]{\txt{\textbf{Blob}}} }
   \begin{itemize}
   \item Blobs store file data (text or binary).
   \item Labeled by SHA1. \textit{If the content changes, so does the SHA.}
@@ -70,7 +73,7 @@ text files. Often all the tools do is manipulate them. Feel free to poke around.
   \frametitle{Trees}
   \dia{ &
     *+++=[o][F-]{\txt{Blob}} \\
-    *+++=[o][F-]{\txt{Tree}} \ar[r] \ar[ru] &
+    *+++=[o][F-]{\txt{\textbf{Tree}}} \ar[r] \ar[ru] &
     *+++=[o][F-]{\txt{Blob}}
   }
   \begin{itemize}
@@ -82,14 +85,15 @@ text files. Often all the tools do is manipulate them. Feel free to poke around.
 
 \begin{frame}
   \frametitle{Commits}
-  \dia { & &
+  \dia {
+    *+++=[o][F-]{\txt{Commit}} & &
     *+++=[o][F-]{\txt{Blob}} \\
-    *+++=[o][F-]{\txt{Commit}} \ar[r] &
+    *+++=[o][F-]{\txt{\textbf{Commit}}} \ar[u] \ar[r] &
     *+++=[o][F-]{\txt{Tree}} \ar[ru] \ar[r] &
     *+++=[o][F-]{\txt{Blob}}
   }
   \begin{itemize}
-  \item Point to a tree object
+  \item Points to a tree object and parent commit(s)
   \item Stores author and date information
   \item Labeled by SHA's.
   \end{itemize}
@@ -121,9 +125,9 @@ sense.
     *++[o][F-]{c} \ar[r] &
     *++[o][F-]{d} \ar[r] &
     *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-465} \restore \\ & &
-    *++[o][F-]{g} \ar[r] &
+    *++[o][F-]{g} \ar[r] \save +<0cm,-0.6cm>*\txt{origin/SAVE-576} \restore &
     *++[o][F-]{h} \ar[r] &
-    *++[o][F-]{i} \save +<0cm,0.6cm>*\txt{SAVE-576} \restore
+    *++[o][F-]{i} \save +<0cm,-0.6cm>*\txt{SAVE-576} \restore
   }
   \begin{itemize}
   \item Branches are just labels to commit SHA's
@@ -180,6 +184,9 @@ git commit -m "Improved everything"}
 git add edited-file.rb \newline
 git commit --amend}
 \end{frame}
+
+Ammending does rewrite history so be careful if you are dealing with others and
+pushed code.
 
 \subsection{Inspection}
 
@@ -306,7 +313,7 @@ commits.
       *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
       *++[o][F-]{c} \ar[r] &
       *++[o][F-]{d} \ar[r] &
-      *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+      *++[o][F-]{e} \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
   }}
   \only<2>{
     \dia {
@@ -314,9 +321,10 @@ commits.
     *++[o][F-]{b} \ar[r] &
     *++[o][F-]{c} \ar[r] &
     *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \save +<0cm,-0.6cm>*\txt{Master} \restore \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{Master} \restore \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
   }}
 \end{frame}
+
 \begin{frame}
   \frametitle{Merging}
   \begin{itemize}
@@ -331,7 +339,7 @@ commits.
     *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
     *++[o][F-]{g} \ar[r] &
     *++[o][F-]{h} \ar[r] &
-    *++[o][F-]{i} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+    *++[o][F-]{i} \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
   }}
   \only<2> { \dia {
     *++[o][F-]{a} \ar[r] &
@@ -358,7 +366,7 @@ commits.
       *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
       *++[o][F-]{c} \ar[r] &
       *++[o][F-]{d} \ar[r] &
-      *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+      *++[o][F-]{e} \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
   }}
   \only<2> {
     \dia {
@@ -387,7 +395,7 @@ commits.
     *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
     *++[o][F-]{g} \ar[r] &
     *++[o][F-]{h} \ar[r] &
-    *++[o][F-]{i} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+    *++[o][F-]{i} \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
   }}
   \only<2> { \dia {
     *++[o][F-]{a} \ar[r] &
@@ -420,19 +428,6 @@ commits.
 \end{frame}
 
 \begin{frame}
-  \frametitle{Pulling}
-  \begin{itemize}
-  \item Special case
-  \item Executes:
-    \begin{itemize}
-    \item \texttt{git fetch}
-    \item \texttt{git merge}
-    \end{itemize}
-  \item Only performs the merge for the current branch
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
   \frametitle{Pushing}
   \begin{itemize}
     \item \texttt{git push origin source:destination} \\ This will push objects
@@ -444,6 +439,19 @@ commits.
     \item \texttt{git push -f} \\ Push normally doesn't allow anything but fast
       forward, while this completely overrides the destination using the source
       objects
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pulling}
+  \begin{itemize}
+  \item Special case
+  \item Executes:
+    \begin{itemize}
+    \item \texttt{git fetch}
+    \item \texttt{git merge}
+    \end{itemize}
+  \item Only performs the merge for the current branch
   \end{itemize}
 \end{frame}
 
