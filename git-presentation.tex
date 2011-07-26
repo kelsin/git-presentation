@@ -271,21 +271,21 @@ commits.
 \begin{frame}
   \frametitle{Locations and Commands}
 
-  \only<1>{
+  \only<beamer|beamer:1>{
     \dia {
           *++[F-,]{\txt{Working}} &
           *++[F-,]{\txt{Index}} &
           *++[F-,]{\txt{Local Repo}} &
           *++[F-,]{\txt{Remote Repo}}
   }}
-  \only<2>{
+  \only<beamer|beamer:2>{
     \dia {
           *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
           *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
           *++[F-,]{\txt{Local Repo}} &
           *++[F-,]{\txt{Remote Repo}}
   }}
-  \only<3>{
+  \only<beamer|beamer:3>{
     \dia {
           *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
           *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
@@ -313,7 +313,7 @@ commits.
     \item \texttt{git checkout master}
     \item \texttt{git merge SAVE-234}
   \end{itemize}
-  \only<1>{
+  \only<article|beamer|beamer:1>{
     \dia {
       *++[o][F-]{a} \ar[r] &
       *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
@@ -337,7 +337,7 @@ commits.
     \item \texttt{git checkout master}
     \item \texttt{git merge SAVE-234}
   \end{itemize}
-  \only<1> { \dia {
+  \only<article|beamer|beamer:1> { \dia {
     *++[o][F-]{a} \ar[r] &
     *++[o][F-]{b} \ar[r] \ar[rd] &
     *++[o][F-]{c} \ar[r] &
@@ -366,7 +366,7 @@ commits.
     \item \texttt{git checkout master}
     \item \texttt{git merge --no-ff SAVE-234}
   \end{itemize}
-  \only<1> {
+  \only<article|beamer|beamer:1> {
     \dia {
       *++[o][F-]{a} \ar[r] &
       *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
@@ -393,7 +393,7 @@ commits.
     \item \texttt{git checkout SAVE-}234
     \item \texttt{git rebase master}
   \end{itemize}
-  \only<1> { \dia {
+  \only<article|beamer|beamer:1> { \dia {
     *++[o][F-]{a} \ar[r] &
     *++[o][F-]{b} \ar[r] \ar[rd] &
     *++[o][F-]{c} \ar[r] &
