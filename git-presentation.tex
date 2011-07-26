@@ -1,5 +1,5 @@
-\documentclass{beamer}
 \usepackage{color}
+\usepackage{float}
 
 \input xy
 \xyoption{all}
@@ -8,12 +8,14 @@
 \usetheme{Darmstadt}
 \usecolortheme{crane}
 
+\setbeamercovered{dynamic}
+
 \title{Git for mere mortals}
 \author{Christopher Giroir}
 \date{July 26th, 2011}
 
 % Commands
-\newcommand{\dia}[1]{\begin{figure}\centerline{\xymatrix{#1}}\end{figure}}
+\newcommand{\dia}[1]{\begin{figure}[H]\centerline{\xymatrix{#1}}\end{figure}}
 
 \begin{document}
 
@@ -28,12 +30,12 @@
 
 \section{Internals}
 
+\subsection{Objects}
+
 \begin{frame}
   \frametitle{Object Store}
   The git object store is a big black box and we like it that way.
 \end{frame}
-
-\subsection{Objects}
 
 \begin{frame}
   \frametitle{Blobs}
@@ -118,8 +120,6 @@
 
 \section{Distribution}
 
-\subsection{Advantages}
-
 \begin{frame}
   \frametitle{Distributed Source Control}
   \begin{itemize}
@@ -133,10 +133,8 @@
   \end{itemize}
 \end{frame}
 
-\subsection{Locations}
-
 \begin{frame}
-  \frametitle{Four Locations}
+  \frametitle{Location Descriptions}
   Git has 4 locations where commits are stored
   \pause
   \begin{itemize}
@@ -151,45 +149,38 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Four Locations}
-  \dia {
-    *++[F-,]{\txt{Working}} &
-    *++[F-,]{\txt{Index}} &
-    *++[F-,]{\txt{Local Repo}} &
-    *++[F-,]{\txt{Remote Repo}}
-  }
-\end{frame}
+  \frametitle{Locations and Commands}
 
-\begin{frame}
-  \frametitle{Four Locations}
-  \dia {
-    *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
-    *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
-    *++[F-,]{\txt{Local Repo}} &
-    *++[F-,]{\txt{Remote Repo}}
-  }
-\end{frame}
-
-\begin{frame}
-  \frametitle{Four Locations}
-  \dia {
-    *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
-    *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
-    *++[F-,]{\txt{Local Repo}} \ar@/^2pc/[ll]^{\txt{git checkout}}&
-    *++[F-,]{\txt{Remote Repo}}
-  }
-\end{frame}
-
-\begin{frame}
-  \frametitle{Four Locations}
-  \dia {
-    *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
-    *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
-    *++[F-,]{\txt{Local Repo}} \ar@/^2pc/[r]^{\txt{git push}} \ar@/^2pc/[ll]^{\txt{git checkout}}&
-    *++[F-,]{\txt{Remote Repo}} \ar@/^2pc/[l]^{\txt{git fetch}} \ar `d[dd] `[ddlll]^{\txt{git pull}} [lll] \\
-    & & & \\
-    & & &
-  }
+  \only<1>{
+    \begin{figure}[H]\centerline{\xymatrix{
+          *++[F-,]{\txt{Working}} &
+          *++[F-,]{\txt{Index}} &
+          *++[F-,]{\txt{Local Repo}} &
+          *++[F-,]{\txt{Remote Repo}}
+  }}\end{figure}}
+  \only<2>{
+    \begin{figure}[H]\centerline{\xymatrix{
+          *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
+          *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
+          *++[F-,]{\txt{Local Repo}} &
+          *++[F-,]{\txt{Remote Repo}}
+  }}\end{figure}}
+  \only<3>{
+    \begin{figure}[H]\centerline{\xymatrix{
+          *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
+          *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
+          *++[F-,]{\txt{Local Repo}} \ar@/^2pc/[ll]^{\txt{git checkout}}&
+          *++[F-,]{\txt{Remote Repo}}
+  }}\end{figure}}
+  \only<4>{
+    \begin{figure}[H]\centerline{\xymatrix{
+          *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
+          *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
+          *++[F-,]{\txt{Local Repo}} \ar@/^2pc/[r]^{\txt{git push}} \ar@/^2pc/[ll]^{\txt{git checkout}}&
+          *++[F-,]{\txt{Remote Repo}} \ar@/^2pc/[l]^{\txt{git fetch}} \ar `d[dd] `[ddlll]^{\txt{git pull}} [lll] \\
+          & & & \\
+          & & &
+  }}\end{figure}}
 \end{frame}
 
 \section{Merging and Rebasing}
@@ -198,52 +189,42 @@
 
 \begin{frame}
   \frametitle{Fast Forward Merging}
-  \begin{example}
-    \texttt{git checkout master \\ git merge SAVE-234}
-  \end{example}
-  \dia {
-    *++[o][F-]{a} \ar[r] &
-    *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
-    *++[o][F-]{c} \ar[r] &
-    *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
-  }
-\end{frame}
-
-\begin{frame}
-  \frametitle{Fast Forward Merging}
-  \begin{example}
-    \texttt{git checkout master \\ git merge SAVE-234}
-  \end{example}
-  \dia {
-    *++[o][F-]{a} \ar[r] &
-    *++[o][F-]{b} \ar[r] \ar@/_2pc/[rrr]_{Master} &
-    *++[o][F-]{c} \ar[r] &
-    *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
-  }
-\end{frame}
-
-\begin{frame}
-  \frametitle{Fast Forward Merging}
-  \begin{example}
-    \texttt{git checkout master \\ git merge SAVE-234}
-  \end{example}
-  \dia {
+  \begin{itemize}
+    \item \texttt{git checkout master}
+    \item \texttt{git merge SAVE-234}
+  \end{itemize}
+  \only<1>{
+    \dia {
+      *++[o][F-]{a} \ar[r] &
+      *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
+      *++[o][F-]{c} \ar[r] &
+      *++[o][F-]{d} \ar[r] &
+      *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+  }}
+  \only<2>{
+    \dia {
+      *++[o][F-]{a} \ar[r] &
+      *++[o][F-]{b} \ar[r] \ar@/_2pc/[rrr]_{Master} &
+      *++[o][F-]{c} \ar[r] &
+      *++[o][F-]{d} \ar[r] &
+      *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+  }}
+  \only<3>{
+    \dia {
     *++[o][F-]{a} \ar[r] &
     *++[o][F-]{b} \ar[r] &
     *++[o][F-]{c} \ar[r] &
     *++[o][F-]{d} \ar[r] &
     *++[o][F-]{e} \save +<0cm,-0.6cm>*\txt{Master} \restore \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
-  }
+  }}
 \end{frame}
-
 \begin{frame}
   \frametitle{Merging}
-  \begin{example}
-    \texttt{git checkout master \\ git merge SAVE-234}
-  \end{example}
-  \dia {
+  \begin{itemize}
+    \item \texttt{git checkout master}
+    \item \texttt{git merge SAVE-234}
+  \end{itemize}
+  \only<1> { \dia {
     *++[o][F-]{a} \ar[r] &
     *++[o][F-]{b} \ar[r] \ar[rd] &
     *++[o][F-]{c} \ar[r] &
@@ -252,15 +233,8 @@
     *++[o][F-]{g} \ar[r] &
     *++[o][F-]{h} \ar[r] &
     *++[o][F-]{i} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
-  }
-\end{frame}
-
-\begin{frame}
-  \frametitle{Merging}
-  \begin{example}
-    \texttt{git checkout master \\ git merge SAVE-234}
-  \end{example}
-  \dia {
+  }}
+  \only<2> { \dia {
     *++[o][F-]{a} \ar[r] &
     *++[o][F-]{b} \ar[r] \ar[rd] &
     *++[o][F-]{c} \ar[r] &
@@ -270,46 +244,43 @@
     *++[o][F-]{g} \ar[r] &
     *++[o][F-]{h} \ar[r] &
     *++[o][F-]{i} \ar[ru] \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
-  }
+  }}
 \end{frame}
 
 \begin{frame}
   \frametitle{No Fast Forward Merging}
-  \begin{example}
-    \texttt{git checkout master \\ git merge --no-ff SAVE-234}
-  \end{example}
-  \dia {
-    *++[o][F-]{a} \ar[r] &
-    *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
-    *++[o][F-]{c} \ar[r] &
-    *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
-  }
-\end{frame}
-
-\begin{frame}
-  \frametitle{No Fast Forward Merging}
-  \begin{example}
-    \texttt{git checkout master \\ git merge --no-ff SAVE-234}
-  \end{example}
-  \dia {
-    *++[o][F-]{a} \ar[r] &
-    *++[o][F-]{b} \ar[rd] \ar[rrrr] & & & &
-    *++[o][F=]{f} \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
-    *++[o][F-]{c} \ar[r] &
-    *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \ar[ru] \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
-  }
+  \begin{itemize}
+    \item \texttt{git checkout master}
+    \item \texttt{git merge --no-ff SAVE-234}
+  \end{itemize}
+  \only<1> {
+    \dia {
+      *++[o][F-]{a} \ar[r] &
+      *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
+      *++[o][F-]{c} \ar[r] &
+      *++[o][F-]{d} \ar[r] &
+      *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
+  }}
+  \only<2> {
+    \dia {
+      *++[o][F-]{a} \ar[r] &
+      *++[o][F-]{b} \ar[rd] \ar[rrrr] & & & &
+      *++[o][F=]{f} \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
+      *++[o][F-]{c} \ar[r] &
+      *++[o][F-]{d} \ar[r] &
+      *++[o][F-]{e} \ar[ru] \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
+  }}
 \end{frame}
 
 \subsection{Rebase}
 
 \begin{frame}
   \frametitle{Rebase}
-  \begin{example}
-    \texttt{git checkout SAVE-234 \\ git rebase master}
-  \end{example}
-  \dia {
+  \begin{itemize}
+    \item \texttt{git checkout SAVE-}234
+    \item \texttt{git rebase master}
+  \end{itemize}
+  \only<1> { \dia {
     *++[o][F-]{a} \ar[r] &
     *++[o][F-]{b} \ar[r] \ar[rd] &
     *++[o][F-]{c} \ar[r] &
@@ -318,15 +289,8 @@
     *++[o][F-]{g} \ar[r] &
     *++[o][F-]{h} \ar[r] &
     *++[o][F-]{i} \save +<0cm,0.6cm>*\txt{SAVE-234} \restore
-  }
-\end{frame}
-
-\begin{frame}
-  \frametitle{Rebase}
-  \begin{example}
-    \texttt{git checkout SAVE-234 \\ git rebase master}
-  \end{example}
-  \dia {
+  }}
+  \only<2> { \dia {
     *++[o][F-]{a} \ar[r] &
     *++[o][F-]{b} \ar[r] &
     *++[o][F-]{c} \ar[r] &
@@ -335,7 +299,7 @@
     *++[o][F=]{g'} \ar[r] &
     *++[o][F=]{h'} \ar[r] &
     *+++[o][F=]{i'} \save +<0cm,-0.8cm>*\txt{SAVE-234} \restore
-  }
+  }}
 \end{frame}
 
 \section{Extras}
