@@ -152,35 +152,35 @@
   \frametitle{Locations and Commands}
 
   \only<1>{
-    \begin{figure}[H]\centerline{\xymatrix{
+    \dia {
           *++[F-,]{\txt{Working}} &
           *++[F-,]{\txt{Index}} &
           *++[F-,]{\txt{Local Repo}} &
           *++[F-,]{\txt{Remote Repo}}
-  }}\end{figure}}
+  }}
   \only<2>{
-    \begin{figure}[H]\centerline{\xymatrix{
+    \dia {
           *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
           *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
           *++[F-,]{\txt{Local Repo}} &
           *++[F-,]{\txt{Remote Repo}}
-  }}\end{figure}}
+  }}
   \only<3>{
-    \begin{figure}[H]\centerline{\xymatrix{
+    \dia {
           *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
           *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
           *++[F-,]{\txt{Local Repo}} \ar@/^2pc/[ll]^{\txt{git checkout}}&
           *++[F-,]{\txt{Remote Repo}}
-  }}\end{figure}}
+  }}
   \only<4>{
-    \begin{figure}[H]\centerline{\xymatrix{
+    \dia {
           *++[F-,]{\txt{Working}} \ar@/^2pc/[r]^{\txt{git add}}&
           *++[F-,]{\txt{Index}} \ar@/^2pc/[r]^{\txt{git commit}}&
           *++[F-,]{\txt{Local Repo}} \ar@/^2pc/[r]^{\txt{git push}} \ar@/^2pc/[ll]^{\txt{git checkout}}&
           *++[F-,]{\txt{Remote Repo}} \ar@/^2pc/[l]^{\txt{git fetch}} \ar `d[dd] `[ddlll]^{\txt{git pull}} [lll] \\
           & & & \\
           & & &
-  }}\end{figure}}
+  }}
 \end{frame}
 
 \section{Merging and Rebasing}
