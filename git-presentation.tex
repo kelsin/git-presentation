@@ -1,5 +1,6 @@
 \usepackage{color}
 \usepackage{float}
+\usepackage{hyperref}
 
 \input xy
 \xyoption{all}
@@ -10,10 +11,10 @@
 
 \setbeamercovered{dynamic}
 
-\title{Git for mere mortals}
-\subtitle{https://github.com/Kelsin/git-presentation}
+\title{Git}
+\subtitle{https://github.com/kelsin/git-presentation}
 \author{Christopher Giroir}
-\date{July 26th, 2011}
+\date{June 1st, 2023}
 
 % Commands
 \newcommand{\dia}[1]{\begin{figure}[H]\centerline{\xymatrix{#1}}\end{figure}}
@@ -28,19 +29,62 @@
 \end{frame}
 
 \begin{frame}
-  \tableofcontents
+  \tableofcontents[hideallsubsections]
 \end{frame}
 
-\section{Internals}
+\section{History}
+
+\subsection{Creation}
+
+\begin{frame}
+  \frametitle{Creation}
+  \begin{itemize}
+  \item Created by Linus Torvalds
+  \pause
+  \item Handed off after 3 months
+  \pause
+  \item BitKeeper removed Linux's free license
+  \pause
+  \item Built for distributed workflows and speed
+  \end{itemize}
+\end{frame}
+
+\subsection{Competitors}
+
+\begin{frame}
+  \frametitle{Competitors}
+  \begin{itemize}
+  \item \href{https://www.nongnu.org/cvs/}{CVS} / \href{https://subversion.apache.org/}{SVN}
+  \pause
+  \item \href{http://darcs.net/}{Darcs} / \href{https://en.wikipedia.org/wiki/GNU_Bazaar}{Bazaar}
+  \pause
+  \item \href{https://www.mercurial-scm.org/}{Mercurial}
+  \end{itemize}
+\end{frame}
+
+\subsection{Github}
+
+\begin{frame}
+  \frametitle{Github}
+  \begin{itemize}
+  \item \href{https://github.com/}{Github} is a web front end on top of \href{https://git-scm.com/}{Git}
+  \pause
+  \item Very popular
+  \pause
+  \item This talk: core git
+  \end{itemize}
+\end{frame}
+
+\section{Trees and Blobs}
 
 \subsection{Objects}
 
 \begin{frame}
   \frametitle{Object Store}
   \begin{itemize}
-  \item The git object store is a big black box and we like it that way.
+  \item Black Box!
   \pause
-  \item It was written for speed and correctness
+  \item Speedy and Correct
   \pause
   \item Comparisons
     \begin{itemize}
@@ -64,8 +108,8 @@ and explore in the .git directory.
   \frametitle{Blobs}
   \dia{ *+++=[o][F-]{\txt{\textbf{Blob}}} }
   \begin{itemize}
-  \item Blobs store file data (text or binary).
-  \item Labeled by SHA1. \textit{If the content changes, so does the SHA.}
+  \item Store text or binary data
+  \item Labeled by SHA1
   \end{itemize}
 \end{frame}
 
@@ -77,9 +121,9 @@ and explore in the .git directory.
     *+++=[o][F-]{\txt{Blob}}
   }
   \begin{itemize}
-  \item Trees point to blobs
-  \item Represent the entire state of the working directory
-  \item Also labeled by SHA's.
+  \item Trees point to blobs or other trees
+  \item Represent the entire state of the directory
+  \item Labeled by SHA1
   \end{itemize}
 \end{frame}
 
@@ -93,17 +137,17 @@ and explore in the .git directory.
     *+++=[o][F-]{\txt{Blob}}
   }
   \begin{itemize}
-  \item Points to a tree object and parent commit(s)
-  \item Stores author and date information
-  \item Labeled by SHA's.
+  \item 0 to N parents
+  \item Points to 1 tree
+  \item Metadata: author, date, \textit{etc}
+  \item Labeled by SHA1
   \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Important Distinction!}
   \begin{itemize}
-  \item Commits link to entires \textcolor{blue}{\textbf{TREES}} not
-  \textcolor{red}{\textbf{DIFFS}}.
+  \item Commits link to \textcolor{blue}{\textbf{TREES}} not \textcolor{red}{\textbf{DIFFS}}.
   \item Diffs are not stored in git, they are computed.
   \end{itemize}
 \end{frame}
@@ -121,17 +165,17 @@ sense.
   Most other things in git are pointers to commits.
   \dia {
     *++[o][F-]{a} \ar[r] \save +<0cm,0.6cm>*\txt{\textit{v3.0.1}} \restore &
-    *++[o][F-]{b} \ar[r] \ar[rd] \save +<0cm,0.6cm>*\txt{Master} \restore &
+    *++[o][F-]{b} \ar[r] \ar[rd] \save +<0cm,0.6cm>*\txt{main} \restore &
     *++[o][F-]{c} \ar[r] &
     *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{SAVE-465} \restore \\ & &
-    *++[o][F-]{g} \ar[r] \save +<0cm,-0.6cm>*\txt{origin/SAVE-576} \restore &
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{foo} \restore \\ & &
+    *++[o][F-]{g} \ar[r] \save +<0cm,-0.6cm>*\txt{origin/bar} \restore &
     *++[o][F-]{h} \ar[r] &
-    *++[o][F-]{i} \save +<0cm,-0.6cm>*\txt{SAVE-576} \restore
+    *++[o][F-]{i} \save +<0cm,-0.6cm>*\txt{bar} \restore
   }
   \begin{itemize}
-  \item Branches are just labels to commit SHA's
-  \item Tags are just labels with meta information
+  \item Branches are pointers to commits
+  \item Tags also include meta information
   \end{itemize}
 \end{frame}
 
@@ -142,110 +186,24 @@ sense.
     \pause
   \item Any commit after it changes as well
     \pause
-  \item Most branch operations are quick and painless
-    \pause
-  \item Can shoot yourself in the foot and heal it back up again
+  \item Don't be afraid
   \end{itemize}
 \end{frame}
 
-\section{Usage}
-
-I don't want to spend a lot of time on examples since you can find that
-information in cheat sheets.
-
-\subsection{Creating and Commiting}
-
-\begin{frame}
-  \frametitle{Starting Out}
-  \code{Setting User Info}{
-git config --global user.name "Christopher Giroir" \newline
-git config --global user.email "kelsin@valefor.com"}
-    \pause
-  \code{Completely New Repo}{
-cd dir-with-code \newline
-git init}
-    \pause
-  \code{Cloning any accessible repo}{
-git clone git@github.com:Kelsin/configs.git \newline
-cd configs}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Commits}
-  \code{Initial Commit}{
-git add . \newline
-git commit -m "Initial Commit"}
-    \pause
-  \code{Editing some files}{
-git add edited-file.rb \newline
-git commit -m "Improved everything"}
-    \pause
-  \code{Adding to previous commit}{
-git add edited-file.rb \newline
-git commit --amend}
-\end{frame}
-
-Ammending does rewrite history so be careful if you are dealing with others and
-pushed code.
-
-\subsection{Inspection}
-
-\begin{frame}
-  \frametitle{Status and Diffs}
-  \code{Normal Status}{git status}
-    \pause
-  \code{What's current changed?}{git diff}
-    \pause
-  \code{Changes from only one file}{git diff example-file.rb}
-    \pause
-  \code{Changes between branches}{git diff master}
-\end{frame}
-
-Most git commands page automatically in an interactive terminal. Git diff
-accepst almost all flags that normal diff accepts.
-
-\begin{frame}
-  \frametitle{Show and Log}
-  \code{Show current commit}{git show}
-    \pause
-  \code{Show some other commit}{git show 234ab32}
-    \pause
-  \code{Show log of recent commits}{git log}
-    \pause
-  \code{Show pretty log}{git log --graph --decorate --oneline}
-\end{frame}
-
-Git has many options for show commits both in log form and in individual detail.
-
-\begin{frame}
-  \frametitle{Refs and Objects}
-  \code{By commit id}{git show 234ab32}
-    \pause
-  \code{By branch}{git show master}
-    \pause
-  \code{By tag}{git show v3.0.2}
-    \pause
-  \code{Relative}{git show HEAD\^{}}
-\end{frame}
-
-You can reference git commits in many ways including dates, branch labels, tag
-labels, etc. There are even some commands for finding commits relative to other
-commits.
-
-\section{Distribution}
+\section{Locations}
 
 \subsection{Advantages}
 
 \begin{frame}
   \frametitle{Distributed Source Control}
   \begin{itemize}
-  \item Only difference from remote and local (normally): working directories
+  \item Remote and Local differences
     \pause
   \item Can function offline
     \pause
-  \item Can ``push'' and ``pull'' from each other, as well as servers
+  \item Can ``push'' and ``pull'' from each other
     \pause
-  \item Each of our computers serves as a backup of the server
+  \item We are all backups
   \end{itemize}
 \end{frame}
 
@@ -258,13 +216,15 @@ commits.
   \begin{itemize}
   \item \textbf{Remote Repo} Any remote object store
     \pause
-  \item \textbf{Local Repo} You local object store
+  \item \textbf{Local Repo} Your local object store
     \pause
-  \item \textbf{Index} A single spot to ``stage'' commits
+  \item \textbf{Index} Place to ``stage'' commits
     \pause
-  \item \textbf{Working Directory} These are the files you are editing
+  \item \textbf{Working Directory} Your local files
   \end{itemize}
 \end{frame}
+
+These are logical locations, not file locations.
 
 \subsection{Command Examples}
 
@@ -303,148 +263,9 @@ commits.
   }}
 \end{frame}
 
-\section{Merging and Rebasing}
-
-\subsection{Merging}
-
-\begin{frame}
-  \frametitle{Fast Forward Merging}
-  \begin{itemize}
-    \item \texttt{git checkout master}
-    \item \texttt{git merge SAVE-234}
-  \end{itemize}
-  \only<article|beamer|beamer:1>{
-    \dia {
-      *++[o][F-]{a} \ar[r] &
-      *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
-      *++[o][F-]{c} \ar[r] &
-      *++[o][F-]{d} \ar[r] &
-      *++[o][F-]{e} \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
-  }}
-  \only<2>{
-    \dia {
-    *++[o][F-]{a} \ar[r] &
-    *++[o][F-]{b} \ar[r] &
-    *++[o][F-]{c} \ar[r] &
-    *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{Master} \restore \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
-  }}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Merging}
-  \begin{itemize}
-    \item \texttt{git checkout master}
-    \item \texttt{git merge SAVE-234}
-  \end{itemize}
-  \only<article|beamer|beamer:1> { \dia {
-    *++[o][F-]{a} \ar[r] &
-    *++[o][F-]{b} \ar[r] \ar[rd] &
-    *++[o][F-]{c} \ar[r] &
-    *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
-    *++[o][F-]{g} \ar[r] &
-    *++[o][F-]{h} \ar[r] &
-    *++[o][F-]{i} \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
-  }}
-  \only<2> { \dia {
-    *++[o][F-]{a} \ar[r] &
-    *++[o][F-]{b} \ar[r] \ar[rd] &
-    *++[o][F-]{c} \ar[r] &
-    *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \ar[r] &
-    *++[o][F=]{j}  \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
-    *++[o][F-]{g} \ar[r] &
-    *++[o][F-]{h} \ar[r] &
-    *++[o][F-]{i} \ar[ru] \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
-  }}
-\end{frame}
-
-\begin{frame}
-  \frametitle{No Fast Forward Merging}
-  \begin{itemize}
-    \item \texttt{git checkout master}
-    \item \texttt{git merge --no-ff SAVE-234}
-  \end{itemize}
-  \only<article|beamer|beamer:1> {
-    \dia {
-      *++[o][F-]{a} \ar[r] &
-      *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{Master} \restore &
-      *++[o][F-]{c} \ar[r] &
-      *++[o][F-]{d} \ar[r] &
-      *++[o][F-]{e} \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
-  }}
-  \only<2> {
-    \dia {
-      *++[o][F-]{a} \ar[r] &
-      *++[o][F-]{b} \ar[rd] \ar[rrrr] & & & &
-      *++[o][F=]{f} \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
-      *++[o][F-]{c} \ar[r] &
-      *++[o][F-]{d} \ar[r] &
-      *++[o][F-]{e} \ar[ru] \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
-  }}
-\end{frame}
-
-\subsection{Rebase}
-
-\begin{frame}
-  \frametitle{Rebase}
-  \begin{itemize}
-    \item \texttt{git checkout SAVE-}234
-    \item \texttt{git rebase master}
-  \end{itemize}
-  \only<article|beamer|beamer:1> { \dia {
-    *++[o][F-]{a} \ar[r] &
-    *++[o][F-]{b} \ar[r] \ar[rd] &
-    *++[o][F-]{c} \ar[r] &
-    *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
-    *++[o][F-]{g} \ar[r] &
-    *++[o][F-]{h} \ar[r] &
-    *++[o][F-]{i} \save +<0cm,-0.6cm>*\txt{SAVE-234} \restore
-  }}
-  \only<2> { \dia {
-    *++[o][F-]{a} \ar[r] &
-    *++[o][F-]{b} \ar[r] &
-    *++[o][F-]{c} \ar[r] &
-    *++[o][F-]{d} \ar[r] &
-    *++[o][F-]{e} \ar[lld] \save +<0cm,0.6cm>*\txt{Master} \restore \\ & &
-    *++[o][F=]{g'} \ar[r] &
-    *++[o][F=]{h'} \ar[r] &
-    *+++[o][F=]{i'} \save +<0cm,-0.8cm>*\txt{SAVE-234} \restore
-  }}
-\end{frame}
-
-\section{Extras}
-
-\subsection{Remotes}
-
-\begin{frame}
-  \frametitle{Remote Commands}
-  \code{Adding remote}{git remote add origin git@github.com:Kelsin/configs.git}
-    \pause
-  \code{Fetch all remote objects}{git fetch}
-    \pause
-  \code{Show all branches}{git branch -a}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Pushing}
-  \code{Push objects from source to destination}{git push origin source:destination}
-    \pause
-  \code{Removing remote branch}{git push origin :destination}
-    \pause
-  \code{Setting upstream}{git push -u origin SAVE-453}
-    \pause
-  \code{Force pushes}{git push -f origin SAVE-453}
-\end{frame}
-
-Force pushing and removing remote branches is a dangerous operation. Make
-backups of branches any time you are worried.
-
 \begin{frame}
   \frametitle{Pulling}
-  \code{Pull in remote changes}{git pull origin master}
+  \code{Pull in remote changes}{git pull origin main}
   \begin{itemize}
   \item \textcolor{red}{Special case}
   \item Executes:
@@ -456,11 +277,125 @@ backups of branches any time you are worried.
   \end{itemize}
 \end{frame}
 
-\subsection{Misc}
+\section{Merging and Rebasing}
+
+\subsection{Merging}
+
+\begin{frame}
+  \frametitle{Fast Forward Merging}
+  \begin{itemize}
+    \item \texttt{git checkout main}
+    \item \texttt{git merge foo}
+  \end{itemize}
+  \only<article|beamer|beamer:1>{
+    \dia {
+      *++[o][F-]{a} \ar[r] &
+      *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{main} \restore &
+      *++[o][F-]{c} \ar[r] &
+      *++[o][F-]{d} \ar[r] &
+      *++[o][F-]{e} \save +<0cm,-0.6cm>*\txt{foo} \restore
+  }}
+  \only<2>{
+    \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{main} \restore \save +<0cm,-0.6cm>*\txt{foo} \restore
+  }}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Merging}
+  \begin{itemize}
+    \item \texttt{git checkout main}
+    \item \texttt{git merge foo}
+  \end{itemize}
+  \only<article|beamer|beamer:1> { \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] \ar[rd] &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{main} \restore \\ & &
+    *++[o][F-]{g} \ar[r] &
+    *++[o][F-]{h} \ar[r] &
+    *++[o][F-]{i} \save +<0cm,-0.6cm>*\txt{foo} \restore
+  }}
+  \only<2> { \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] \ar[rd] &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \ar[r] &
+    *++[o][F=]{j}  \save +<0cm,0.6cm>*\txt{main} \restore \\ & &
+    *++[o][F-]{g} \ar[r] &
+    *++[o][F-]{h} \ar[r] &
+    *++[o][F-]{i} \ar[ru] \save +<0cm,-0.6cm>*\txt{foo} \restore
+  }}
+\end{frame}
+
+\begin{frame}
+  \frametitle{No Fast Forward Merging}
+  \begin{itemize}
+    \item \texttt{git checkout main}
+    \item \texttt{git merge --no-ff foo}
+  \end{itemize}
+  \only<article|beamer|beamer:1> {
+    \dia {
+      *++[o][F-]{a} \ar[r] &
+      *++[o][F-]{b} \ar[r] \save +<0cm,0.6cm>*\txt{main} \restore &
+      *++[o][F-]{c} \ar[r] &
+      *++[o][F-]{d} \ar[r] &
+      *++[o][F-]{e} \save +<0cm,-0.6cm>*\txt{foo} \restore
+  }}
+  \only<2> {
+    \dia {
+      *++[o][F-]{a} \ar[r] &
+      *++[o][F-]{b} \ar[rd] \ar[rrrr] & & & &
+      *++[o][F=]{f} \save +<0cm,0.6cm>*\txt{main} \restore \\ & &
+      *++[o][F-]{c} \ar[r] &
+      *++[o][F-]{d} \ar[r] &
+      *++[o][F-]{e} \ar[ru] \save +<0cm,-0.6cm>*\txt{foo} \restore
+  }}
+\end{frame}
+
+\subsection{Rebase}
+
+\begin{frame}
+  \frametitle{Rebase}
+  \begin{itemize}
+    \item \texttt{git checkout foo}
+    \item \texttt{git rebase main}
+  \end{itemize}
+  \only<article|beamer|beamer:1> { \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] \ar[rd] &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \save +<0cm,0.6cm>*\txt{main} \restore \\ & &
+    *++[o][F-]{g} \ar[r] &
+    *++[o][F-]{h} \ar[r] &
+    *++[o][F-]{i} \save +<0cm,-0.6cm>*\txt{foo} \restore
+  }}
+  \only<2> { \dia {
+    *++[o][F-]{a} \ar[r] &
+    *++[o][F-]{b} \ar[r] &
+    *++[o][F-]{c} \ar[r] &
+    *++[o][F-]{d} \ar[r] &
+    *++[o][F-]{e} \ar[lld] \save +<0cm,0.6cm>*\txt{main} \restore \\ & &
+    *++[o][F=]{g'} \ar[r] &
+    *++[o][F=]{h'} \ar[r] &
+    *+++[o][F=]{i'} \save +<0cm,-0.8cm>*\txt{foo} \restore
+  }}
+\end{frame}
+
+\section{Extras}
+
+\subsection{Git Config File}
 
 \begin{frame}
   \frametitle{Git Config File}
-  My git config is available at https://github.com/Kelsin/configs/blob/master/.gitconfig
+  My git config is available \href{https://github.com/kelsin/dotfiles/blob/main/main/.gitconfig}{on github}
   \begin{itemize}
     \item Push defaults
     \item Commiter name and email
@@ -469,18 +404,20 @@ backups of branches any time you are worried.
   \end{itemize}
 \end{frame}
 
+\subsection{Tips}
+
 \begin{frame}
-  \frametitle{Some Tips}
+  \frametitle{Tips}
   \begin{itemize}
     \item Always work on branches
       \pause
-    \item When in doubt use GitX or gitk to see what you are doing
+    \item Use GitX or gitk to see what you are doing
       \pause
-    \item When in doubt save a new branch so you can always get back
+    \item Save a new branch as a backup
       \pause
-    \item Add the current git branch into your prompt
+    \item Add git branch to your shell prompt
       \pause
-    \item Explore with rebase and cleaning up code before final push
+    \item Explore with rebasing and cleaning!
   \end{itemize}
 \end{frame}
 
